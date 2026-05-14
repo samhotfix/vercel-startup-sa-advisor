@@ -88,21 +88,21 @@ This version includes an optional startup URL field, but it does not scrape the 
 
 A public website can help understand product and business context, but it cannot reliably reveal:
 
-- backend architecture
+- Backend architecture
 
-- deployment architecture
+- Deployment architecture
 
-- observability setup
+- Observability setup
 
-- security posture
+- Security posture
 
 - AI provider usage
 
-- worker architecture
+- Worker architecture
 
-- rate limiting
+- Rate limiting
 
-- database design
+- Database design
 
 Because of that, the prompt explicitly tells the model:
 
@@ -120,15 +120,15 @@ The app should identify this as an AI Usage Growth stage and recommend AI Gatewa
 
 The recommendation should explain:
 
-- why the startup is ready for AI Gateway now
+- Why the startup is ready for AI Gateway now
 
-- what risks exist in the current setup
+- What risks exist in the current setup
 
-- what business value AI Gateway creates
+- What business value AI Gateway creates
 
-- what implementation steps the team should take
+- What implementation steps the team should take
 
-- which secondary Vercel primitives may become relevant soon
+- Which secondary Vercel primitives may become relevant soon
 
 ## Architecture
 
@@ -198,23 +198,23 @@ Main customer-facing interface.
 
 This file handles:
 
-- form state
+- Form state
 
-- optional startup URL input
+- Optional startup URL input
 
-- example startup scenarios
+- Example startup scenarios
 
-- loading state
+- Loading state
 
-- error state
+- Error state
 
-- client-side validation
+- Client-side validation
 
-- calling `/api/analyze`
+- Calling `/api/analyze`
 
-- rendering the recommendation report
+- Rendering the recommendation report
 
-- rendering the lightweight evaluation panel
+- Rendering the lightweight evaluation panel
 
 This file is marked with:
 
@@ -242,19 +242,19 @@ This file contains the Startup Advisor maturity model and instructions for the m
 
 It tells the model to:
 
-- act like a Vercel Startup Solutions Architect
+- Act like a Vercel Startup Solutions Architect
 
-- avoid selling every Vercel product
+- Avoid selling every Vercel product
 
-- classify the startup’s stage
+- Classify the startup’s stage
 
-- recommend one primary Vercel primitive
+- Recommend one primary Vercel primitive
 
-- explain why now
+- Explain why now
 
-- stay practical and customer-facing
+- Stay practical and customer-facing
 
-- avoid overclaiming from the URL
+- Avoid overclaiming from the URL
 
 This file controls how the model reasons.
 
@@ -380,17 +380,17 @@ Without structured output, the model might return inconsistent paragraphs, markd
 
 With structured output, the frontend can reliably render:
 
-- stage
+- Stage
 
-- risks
+- Risks
 
-- recommendation
+- Recommendation
 
-- business value
+- Business value
 
-- implementation plan
+- Implementation plan
 
-- confidence
+- Confidence
 
 ## Why use Zod
 
@@ -450,19 +450,19 @@ This app includes a reference evaluation panel with fixed test cases and a rubri
 
 The recommendation should:
 
-- identify the startup’s current maturity stage
+- Identify the startup’s current maturity stage
 
-- use URL only as product context, not unsupported infrastructure evidence
+- Use URL only as product context, not unsupported infrastructure evidence
 
-- detect stack and missing platform layers from provided context
+- Detect stack and missing platform layers from provided context
 
-- recommend one relevant primary Vercel primitive
+- Recommend one relevant primary Vercel primitive
 
-- explain why the recommendation matters now
+- Explain why the recommendation matters now
 
-- provide practical implementation steps
+- Provide practical implementation steps
 
-- connect the recommendation to customer-facing business value
+- Connect the recommendation to customer-facing business value
 
 For this take-home, the evaluation panel is a reference eval. In a production version, I would automate it by running each test case through `/api/analyze` and scoring whether the expected primitive appears in the response.
 
@@ -514,21 +514,21 @@ I intentionally kept the scope small.
 
 I did not add:
 
-- authentication
+- Authentication
 
-- database persistence
+- Database persistence
 
-- real URL scraping
+- Real URL scraping
 
 - GitHub integration
 
-- real Vercel telemetry
+- Real Vercel telemetry
 
-- automated eval execution
+- Automated eval execution
 
-- user accounts
+- User accounts
 
-- saved recommendation history
+- Saved recommendation history
 
 That was deliberate. The goal of this take-home was not to build a large platform. The goal was to build a focused proof-of-concept that demonstrates product judgment, AI SDK usage, structured output, server-side model calls, and Vercel platform thinking.
 
@@ -704,6 +704,11 @@ explains the product, architecture, tradeoffs, evals, and production path
 
 ## One-minute explanation
 
-Vercel Startup Advisor is a small AI-powered discovery assistant for startup teams. It asks for product, stage, stack, AI usage, and current pain, then recommends the next Vercel primitive that matters now. The frontend is built in `app/page.tsx`. When the user clicks Generate Recommendation, the app sends the intake to `/api/analyze`. That API route runs server-side as a Vercel Function, builds a Startup Advisor prompt, calls OpenAI through the Vercel AI SDK using `generateObject`, validates the output against a Zod schema, and returns structured JSON. The UI renders that JSON as a recommendation report with stage, risks, detected stack, why now, business value, implementation plan, customer-facing explanation, confidence, and a lightweight eval panel. I kept the scope intentionally small and defensible. In production, I would add AI Gateway, Observability, rate limiting, URL crawling, repo analysis, Vercel telemetry, and automated evals.
+Vercel Startup Advisor is a small AI-powered discovery assistant for startup teams. It asks for product, stage, stack, AI usage, and current pain, then recommends the next Vercel primitive that matters now.
 
-```
+The frontend is built in `app/page.tsx`. When the user clicks Generate Recommendation, the app sends the intake to `/api/analyze`. That API route runs server-side as a Vercel Function, builds a Startup Advisor prompt, calls OpenAI through the Vercel AI SDK using `generateObject`, validates the output against a Zod schema, and returns structured JSON.
+
+The UI renders that JSON as a recommendation report with stage, risks, detected stack, why now, business value, implementation plan, customer-facing explanation, confidence, and a lightweight eval panel.
+
+I kept the scope intentionally small and defensible. In production, I would add AI Gateway, Observability, rate limiting, URL crawling, repo analysis, Vercel telemetry, and automated evals.
+
