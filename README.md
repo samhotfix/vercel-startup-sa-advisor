@@ -711,4 +711,3 @@ The frontend is built in `app/page.tsx`. When the user clicks Generate Recommend
 The UI renders that JSON as a recommendation report with stage, risks, detected stack, why now, business value, implementation plan, customer-facing explanation, confidence, and a lightweight eval panel.
 
 I kept the scope intentionally small and defensible. In production, I would add AI Gateway, Observability, rate limiting, URL crawling, repo analysis, Vercel telemetry, and automated evals.
-
