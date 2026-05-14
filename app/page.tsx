@@ -118,7 +118,7 @@ export default function Home() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
 
   function loadScenario(scenario: (typeof exampleScenarios)[number]) {
-    setStartupUrl(scenario.startupUrl);
+    setStartupUrl((currentUrl) => currentUrl || scenario.startupUrl);
     setBuilding(scenario.building);
     setUsersAndStage(scenario.usersAndStage);
     setStack(scenario.stack);
