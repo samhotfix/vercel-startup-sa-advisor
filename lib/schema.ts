@@ -80,3 +80,4 @@ export const analysisSchema = z.object({
 });
 
 export type AnalysisResult = z.infer<typeof analysisSchema>;
+
