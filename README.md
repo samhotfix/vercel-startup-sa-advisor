@@ -20,19 +20,19 @@ This project turns that idea into a lightweight customer-facing advisor.
 
 The app asks for startup context:
 
-1. Optional startup URL
+- Optional startup URL
 
-2. What the startup is building
+- What the startup is building
 
-3. Who uses it and what stage it is in
+- Who uses it and what stage it is in
 
-4. Current stack
+- Current stack
 
-5. AI, generated code, or automation usage
+- AI, generated code, or automation usage
 
-6. Biggest pain or risk right now
+- Biggest pain or risk right now
 
-7. Optional extra context
+- Optional extra context
 
 The app then returns:
 
@@ -188,32 +188,40 @@ Frontend stores result in state
 
 Recommendation report renders in the UI
 
+```
+
 ## Key files
 
 ### `app/page.tsx`
 
-Main user interface.
+Main customer-facing interface.
 
 This file handles:
 
 - form state
+
 - optional startup URL input
+
 - example startup scenarios
+
 - loading state
+
 - error state
+
 - client-side validation
+
 - calling `/api/analyze`
+
 - rendering the recommendation report
+
 - rendering the lightweight evaluation panel
 
 This file is marked with:
 
-```
+```tsx
 
-```
-
-```
 "use client";
+
 ```
 
 because it uses React state and click handlers.
@@ -234,27 +242,19 @@ This file contains the Startup Advisor maturity model and instructions for the m
 
 It tells the model to:
 
--   
-act like a Vercel Startup Solutions Architect  
+- act like a Vercel Startup Solutions Architect
 
--   
-avoid selling every Vercel product  
+- avoid selling every Vercel product
 
--   
-classify the startup’s stage  
+- classify the startup’s stage
 
--   
-recommend one primary Vercel primitive  
+- recommend one primary Vercel primitive
 
--   
-explain why now  
+- explain why now
 
--   
-stay practical and customer-facing  
+- stay practical and customer-facing
 
--   
-avoid overclaiming from the URL  
-
+- avoid overclaiming from the URL
 
 This file controls how the model reasons.
 
@@ -266,28 +266,33 @@ This file uses Zod to define the exact shape of the AI response.
 
 It includes:
 
-- `stage`  
+- `stage`
 
-- `stageReasoning`  
+- `stageReasoning`
 
-- `detectedStack`  
+- `detectedStack`
 
-- `urlContext`  
+- `urlContext`
 
-- `risks`  
+- `risks`
 
-- `primaryRecommendation`  
+- `primaryRecommendation`
 
-- `secondaryRecommendations`  
+- `secondaryRecommendations`
 
-- `implementationPlan`  
+- `implementationPlan`
 
-- `customerPitch`  
+- `customerPitch`
 
-- `confidence`  
-
+- `confidence`
 
 This file controls what shape the model returns.
+
+### `README.md`
+
+Project memo.
+
+This file explains the product idea, architecture, request flow, evaluation approach, Vercel platform notes, tradeoffs, and production path.
 
 ## Prompt vs schema
 
@@ -311,12 +316,10 @@ This makes the app easier to reason about, easier to debug, and easier to presen
 
 The app uses a Next.js API route at:
 
-```
+```txt
 
-```
-
-```
 app/api/analyze/route.ts
+
 ```
 
 When deployed on Vercel, this route runs as a Vercel Function.
@@ -325,12 +328,10 @@ Because the route calls an external model provider, it is an I/O-bound workload.
 
 The route includes:
 
-```
+```ts
 
-```
-
-```
 export const maxDuration = 60;
+
 ```
 
 This gives the AI analysis endpoint more tolerance for slower model responses before timing out.
@@ -339,22 +340,18 @@ This gives the AI analysis endpoint more tolerance for slower model responses be
 
 The model call happens inside:
 
-```
+```txt
 
-```
-
-```
 app/api/analyze/route.ts
+
 ```
 
 not directly inside:
 
-```
+```txt
 
-```
-
-```
 app/page.tsx
+
 ```
 
 This keeps the OpenAI API key private.
@@ -371,12 +368,10 @@ The UI needs structured fields that map cleanly to sections of the recommendatio
 
 The app uses:
 
-```
+```ts
 
-```
-
-```
 generateObject
+
 ```
 
 from the Vercel AI SDK because it lets the route request structured output that matches the Zod schema.
@@ -385,24 +380,17 @@ Without structured output, the model might return inconsistent paragraphs, markd
 
 With structured output, the frontend can reliably render:
 
--   
-stage  
+- stage
 
--   
-risks  
+- risks
 
--   
-recommendation  
+- recommendation
 
--   
-business value  
+- business value
 
--   
-implementation plan  
+- implementation plan
 
--   
-confidence  
-
+- confidence
 
 ## Why use Zod
 
@@ -414,16 +402,18 @@ This makes the app more reliable because the UI expects predictable data.
 
 For example, the schema requires:
 
-```
+```ts
 
-```
-
-```
 primaryRecommendation: z.object({
+
   product: z.string(),
+
   whyNow: z.string(),
+
   businessValue: z.string(),
+
 })
+
 ```
 
 That means the result must include a primary recommendation with a product, timing rationale, and business outcome.
@@ -436,57 +426,43 @@ This app includes a reference evaluation panel with fixed test cases and a rubri
 
 ### Test cases
 
-1.   
-Direct OpenAI calls + rising model spend + no fallback  
-  
-Expected: AI Gateway  
+1. Direct OpenAI calls + rising model spend + no fallback  
 
-2.   
-v0 prototype + no auth, database, logs, or rollback confidence  
-  
-Expected: Production readiness with Functions, environment variables, and Observability  
+   Expected: AI Gateway
 
-3.   
-Frontend on Vercel + Railway worker handling background jobs  
-  
-Expected: Workflows or Fluid Compute  
+2. v0 prototype + no auth, database, logs, or rollback confidence  
 
-4.   
-AI-generated or user-generated code needs safe execution  
-  
-Expected: Sandbox  
+   Expected: Production readiness with Functions, environment variables, and Observability
 
-5.   
-Public AI endpoint + bot traffic or runaway usage risk  
-  
-Expected: WAF, BotID, rate limiting, and AI Gateway budgets  
+3. Frontend on Vercel + Railway worker handling background jobs  
 
+   Expected: Workflows or Fluid Compute
+
+4. AI-generated or user-generated code needs safe execution  
+
+   Expected: Sandbox
+
+5. Public AI endpoint + bot traffic or runaway usage risk  
+
+   Expected: WAF, BotID, rate limiting, and AI Gateway budgets
 
 ### Rubric
 
 The recommendation should:
 
--   
-identify the startup’s current maturity stage  
+- identify the startup’s current maturity stage
 
--   
-use URL only as product context, not unsupported infrastructure evidence  
+- use URL only as product context, not unsupported infrastructure evidence
 
--   
-detect stack and missing platform layers from provided context  
+- detect stack and missing platform layers from provided context
 
--   
-recommend one relevant primary Vercel primitive  
+- recommend one relevant primary Vercel primitive
 
--   
-explain why the recommendation matters now  
+- explain why the recommendation matters now
 
--   
-provide practical implementation steps  
+- provide practical implementation steps
 
--   
-connect the recommendation to customer-facing business value  
-
+- connect the recommendation to customer-facing business value
 
 For this take-home, the evaluation panel is a reference eval. In a production version, I would automate it by running each test case through `/api/analyze` and scoring whether the expected primitive appears in the response.
 
@@ -494,82 +470,240 @@ For this take-home, the evaluation panel is a reference eval. In a production ve
 
 If this were a real Vercel internal or customer-facing tool, I would add:
 
--   
-AI Gateway for provider abstraction, usage visibility, budgets, and fallback behavior  
+- AI Gateway for provider abstraction, usage visibility, budgets, and fallback behavior
 
--   
-Observability for latency, errors, and model-call debugging  
+- Observability for latency, errors, and model-call debugging
 
--   
-Rate limiting to protect the public analysis endpoint from abuse  
+- Rate limiting to protect the public analysis endpoint from abuse
 
--   
-URL crawling for public product and business context  
+- URL crawling for public product and business context
 
--   
-GitHub/repo analysis to detect framework usage, direct model imports, workers, and security gaps  
+- GitHub/repo analysis to detect framework usage, direct model imports, workers, and security gaps
 
--   
-Vercel account telemetry for deployments, failed builds, function usage, route errors, and cache behavior  
+- Vercel account telemetry for deployments, failed builds, function usage, route errors, and cache behavior
 
--   
-AI Gateway telemetry for provider usage, model costs, and fallback patterns  
+- AI Gateway telemetry for provider usage, model costs, and fallback patterns
 
--   
-Account history so advisors can track how recommendations evolve over time  
+- Account history so advisors can track how recommendations evolve over time
 
--   
-Human-in-the-loop review before recommendations are sent to customers  
+- Human-in-the-loop review before recommendations are sent to customers
 
--   
-Automated regression evals for recommendation quality  
-
+- Automated regression evals for recommendation quality
 
 The production version would combine:
 
-```
+```txt
 
-```
-
-```
 public website context
+
 + founder-provided context
+
 + repo analysis
+
 + Vercel telemetry
+
 + AI Gateway usage data
+
 ```
 
 That would turn the prototype into a telemetry-driven next-best-action system for startup Solutions Architects.
 
-## Tradeoffs
+## Defensible tradeoffs
 
 I intentionally kept the scope small.
 
 I did not add:
 
--   
-authentication  
+- authentication
 
--   
-database persistence  
+- database persistence
 
--   
-real URL scraping  
+- real URL scraping
 
--   
-GitHub integration  
+- GitHub integration
 
--   
-real Vercel telemetry  
+- real Vercel telemetry
 
--   
-automated eval execution  
+- automated eval execution
 
--   
-user accounts  
+- user accounts
 
--   
-saved recommendation history  
+- saved recommendation history
 
+That was deliberate. The goal of this take-home was not to build a large platform. The goal was to build a focused proof-of-concept that demonstrates product judgment, AI SDK usage, structured output, server-side model calls, and Vercel platform thinking.
 
-The goal was to build something small, useful, and defensible.
+The key architectural decision was to keep the advisor guided and reliable rather than pretending a public website can reveal hidden infrastructure. A URL can help explain product context, but it cannot reliably expose backend architecture, AI usage, observability, security posture, or deployment design.
+
+The production version would combine founder-provided context with URL crawling, GitHub/repo analysis, Vercel account telemetry, AI Gateway usage data, and automated evaluations.
+
+## Local development
+
+Install dependencies:
+
+```bash
+
+npm install
+
+```
+
+Create a `.env.local` file:
+
+```bash
+
+OPENAI_API_KEY=your_openai_api_key
+
+```
+
+Run locally:
+
+```bash
+
+npm run dev
+
+```
+
+Open:
+
+```txt
+
+[http://localhost:3000](http://localhost:3000)
+
+```
+
+## Environment variables
+
+Local development uses:
+
+```txt
+
+.env.local
+
+```
+
+Production on Vercel requires adding the environment variable in the Vercel dashboard:
+
+```txt
+
+OPENAI_API_KEY
+
+```
+
+Make sure the variable is applied to:
+
+- Production
+
+- Preview
+
+- Development
+
+After adding or changing the environment variable in Vercel, redeploy the project.
+
+## Deployment
+
+To deploy on Vercel:
+
+1. Push the project to GitHub.
+
+2. Import the GitHub repo into Vercel.
+
+3. Add `OPENAI_API_KEY` to the project environment variables.
+
+4. Deploy or redeploy.
+
+5. Test the production URL with an example scenario.
+
+## Git safety
+
+Do not commit `.env.local`.
+
+The project’s `.gitignore` should include:
+
+```txt
+
+.env*
+
+```
+
+Before committing, check:
+
+```bash
+
+git status
+
+```
+
+Make sure `.env.local` is not listed under staged files.
+
+## Presentation framing
+
+I would present this as a customer-facing startup discovery assistant, not just a generic AI chatbot.
+
+The opening framing:
+
+> Startups do not need every Vercel product at once. They need the right primitive at the right time. This tool helps map where a startup is today, identify what is starting to break, and recommend the next Vercel move that creates immediate value.
+
+The technical framing:
+
+> The frontend collects guided startup context. The server-side API route builds a Vercel Startup Advisor prompt, calls OpenAI through the Vercel AI SDK with `generateObject`, validates the output against a Zod schema, and returns structured JSON that the UI renders as a recommendation report.
+
+The product framing:
+
+> The point is not to automate a sales pitch. The point is to make technical discovery more consistent, stage-aware, and useful for founders.
+
+## Demo flow
+
+A strong demo flow:
+
+1. Open the app.
+
+2. Explain the thesis: timing-based expansion.
+
+3. Click the `AI spend risk` example.
+
+4. Generate recommendation.
+
+5. Show the primary recommendation: likely AI Gateway.
+
+6. Explain why the recommendation makes sense.
+
+7. Show detected stack and risks.
+
+8. Show implementation plan and customer-facing explanation.
+
+9. Show eval panel.
+
+10. Open code and explain `page.tsx`, `route.ts`, `prompts.ts`, and `schema.ts`.
+
+## Code walkthrough summary
+
+The entire app can be summarized like this:
+
+```txt
+
+page.tsx
+
+collects input, calls /api/analyze, renders result
+
+route.ts
+
+runs server-side, calls OpenAI through AI SDK, returns JSON
+
+prompts.ts
+
+defines the Startup Advisor reasoning framework
+
+schema.ts
+
+defines the structured output contract
+
+[README.md](http://README.md)
+
+explains the product, architecture, tradeoffs, evals, and production path
+
+```
+
+## One-minute explanation
+
+Vercel Startup Advisor is a small AI-powered discovery assistant for startup teams. It asks for product, stage, stack, AI usage, and current pain, then recommends the next Vercel primitive that matters now. The frontend is built in `app/page.tsx`. When the user clicks Generate Recommendation, the app sends the intake to `/api/analyze`. That API route runs server-side as a Vercel Function, builds a Startup Advisor prompt, calls OpenAI through the Vercel AI SDK using `generateObject`, validates the output against a Zod schema, and returns structured JSON. The UI renders that JSON as a recommendation report with stage, risks, detected stack, why now, business value, implementation plan, customer-facing explanation, confidence, and a lightweight eval panel. I kept the scope intentionally small and defensible. In production, I would add AI Gateway, Observability, rate limiting, URL crawling, repo analysis, Vercel telemetry, and automated evals.
+
+```
