@@ -1,6 +1,5 @@
 export const maxDuration = 60;
 
-import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { analysisSchema } from "@/lib/schema";
 import { buildAnalysisPrompt } from "@/lib/prompts";
@@ -20,7 +19,7 @@ export async function POST(request: Request) {
     });
 
     const result = await generateObject({
-      model: openai("gpt-4.1"),
+      model: "openai/gpt-5.5",
       schema: analysisSchema,
       prompt,
     });
